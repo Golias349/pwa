@@ -1,150 +1,52 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0e3b22" />
-  <title>Grão Digital</title>
-
-  <link rel="icon" href="./icone.png" />
-  <link rel="manifest" href="./manifest.json" />
-  <link rel="stylesheet" href="./estilo.css" />
-
-  <!-- Google API para Drive (OAuth + Drive v3) -->
-  <script src="https://apis.google.com/js/api.js"></script>
-</head>
-<body>
-  <!-- Cabeçalho -->
-  <header class="topo">
-    <div class="topo__wrap">
-      <div class="brand">
-        <img src="./icone.png" class="brand__logo" alt="Grão Digital" />
-        <div class="brand__txt">
-          <h1>Grão Digital</h1>
-          <p class="sub">Gestão de talhões, aplicações e custos</p>
-        </div>
-      </div>
-      <button id="btnMenu" class="icon-btn" aria-label="Menu">☰</button>
-    </div>
-    <div class="topo__fade"></div>
-  </header>
-
-  <!-- Menu lateral -->
-  <aside id="drawer" class="drawer" aria-hidden="true">
-    <div class="drawer__head">
-      <strong>Grão Digital</strong>
-      <button id="btnDrawerClose" class="icon-btn" aria-label="Fechar">✕</button>
-    </div>
-    <nav class="drawer__nav">
-      <a href="#" class="drawer__link" data-open="config">⚙️ Configurações</a>
-      <a href="./politica.html" class="drawer__link" target="_blank">🔒 Política de Privacidade</a>
-      <a href="./termos.html" class="drawer__link" target="_blank">📜 Termos de Serviço</a>
-    </nav>
-    <div class="drawer__foot">
-      <span>PWA • <strong id="versaoTxt">v6.3</strong></span>
-      <span class="dev">Desenvolvido por: <strong>Elimaycon Furtado Gomes</strong></span>
-    </div>
-  </aside>
-  <div id="backdrop" class="backdrop" aria-hidden="true"></div>
-
-  <main class="container">
-    <!-- TALHÕES -->
-    <section id="view-talhoes" class="card">
-      <header class="card__head"><span>🌿</span><h2>Talhões</h2></header>
-      <div class="row gap wrap">
-        <input id="inpTalhao" class="input" placeholder="Nome do Talhão" />
-        <button id="btnAddTalhao" class="btn btn-primary">Adicionar Talhão</button>
-      </div>
-      <ul id="listaTalhoes" class="list"></ul>
-    </section>
-
-    <!-- REGISTROS -->
-    <section id="view-registros" class="card hidden">
-      <header class="card__head"><span>🧾</span><h2>Registros de Adubação</h2></header>
-      <div class="row gap wrap">
-        <select id="selTalhao" class="input"></select>
-        <select id="selInsumo" class="input"></select>
-        <input id="inpQtd" class="input" inputmode="decimal" placeholder="Qtd aplicada (kg)" />
-        <input id="inpDesc" class="input" placeholder="Descrição (opcional)" />
-        <button id="btnSalvarAplic" class="btn btn-primary grow">Salvar aplicação</button>
-      </div>
-      <p class="muted">O custo usa o preço do estoque (saco de 50 kg).</p>
-      <h3 class="section-sub">Últimas aplicações</h3>
-      <ul id="listaAplic" class="list"></ul>
-    </section>
-
-    <!-- ESTOQUE -->
-    <section id="view-estoque" class="card hidden">
-      <header class="card__head"><span>📦</span><h2>Estoque</h2></header>
-      <div class="row gap wrap">
-        <input id="inpEstNome" class="input" placeholder="Nome do insumo (ex.: NPK)" />
-        <input id="inpEstQtd" class="input" inputmode="decimal" placeholder="Qtd (kg)" />
-        <input id="inpEstPreco" class="input" inputmode="decimal" placeholder="Preço 50kg (R$)" />
-        <button id="btnEstAdd" class="btn btn-primary">Adicionar</button>
-      </div>
-      <table class="table">
-        <thead><tr><th>Insumo</th><th>Qtd (kg)</th><th>Preço 50kg (R$)</th><th class="col-acoes">Ações</th></tr></thead>
-        <tbody id="tbEst"></tbody>
-      </table>
-    </section>
-
-    <!-- RESUMO -->
-    <section id="view-resumo" class="card hidden">
-      <header class="card__head"><span>📊</span><h2>Resumo Mensal</h2></header>
-      <div class="row gap wrap">
-        <select id="selMes" class="input"></select>
-        <select id="selAno" class="input"></select>
-        <div class="row gap">
-          <button id="btnCSV" class="btn">Exportar CSV</button>
-          <button id="btnPDF" class="btn">Exportar PDF</button>
-        </div>
-      </div>
-      <table class="table" id="tblResumo">
-        <thead><tr><th>Talhão</th><th>Insumo</th><th>Kg</th><th>Gasto (R$)</th><th>Mês/Ano</th><th class="col-acoes">Ações</th></tr></thead>
-        <tbody id="tbResumo"></tbody>
-        <tfoot><tr><th>Total</th><th></th><th id="totKg">0</th><th id="totR$">R$ 0,00</th><th></th><th></th></tr></tfoot>
-      </table>
-    </section>
-
-    <!-- CONFIGURAÇÕES -->
-    <section id="view-config" class="card hidden">
-      <header class="card__head"><span>⚙️</span><h2>Configurações</h2></header>
-      <div class="row gap wrap">
-        <button id="btnExportJSON" class="btn">Exportar backup (JSON)</button>
-        <input id="fileImport" type="file" accept="application/json" />
-        <button id="btnImportJSON" class="btn">Importar backup (JSON)</button>
-      </div>
-
-      <div class="row gap wrap">
-        <button id="btnGAuth" class="btn">🔐 Conectar Google Drive</button>
-        <button id="btnGSave" class="btn">☁️ Salvar no Drive</button>
-        <button id="btnGLoad" class="btn">⬇️ Restaurar do Drive</button>
-        <button id="btnGSignout" class="btn">Sair do Google</button>
-      </div>
-
-      <div class="row right">
-        <button id="btnClearAll" class="btn btn-danger">Apagar TODOS os dados</button>
-      </div>
-    </section>
-  </main>
-
-  <!-- Abas inferiores -->
-  <nav class="tabs">
-    <button class="tab active" data-view="view-talhoes">🌿 Talhões</button>
-    <button class="tab" data-view="view-registros">🧾 Registros</button>
-    <button class="tab" data-view="view-estoque">📦 Estoque</button>
-    <button class="tab" data-view="view-resumo">📊 Resumo</button>
-    <button class="tab" data-view="view-config">⚙️ Config</button>
-  </nav>
-
-  <!-- Scripts -->
-  <script>
-    // Ajuste para cada repositório:
-    // "/agro-café-pwa/" (estável)  ou  "/pwa-test/" (teste)
-    const BASE_PATH = "/pwa-test/";
-    const APP_VERSION = "v6.3";
-    const GOOGLE_CLIENT_ID = "149167584419-39h4d0qhjfjqs09687oih6p1fkpqds0k.apps.googleusercontent.com";
-  </script>
-  <script src="./app.js"></script>
-</body>
-</html>
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Grão Digital</title>
+<meta name="theme-color" content="#0d5f34"><link rel="manifest" href="manifest.json">
+<link rel="icon" href="icone-192.png"><link rel="apple-touch-icon" href="icone-192.png">
+<link rel="stylesheet" href="estilo.css"></head><body>
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Menu lateral">
+  <div class="drawer-header"><div class="logo-circle">🌱</div>
+    <div class="drawer-title"><div class="app-name">Grão Digital</div><small class="muted">Menu</small></div>
+    <button class="drawer-close" id="btnCloseDrawer" aria-label="Fechar menu">✕</button></div>
+  <nav class="drawer-nav" role="menu">
+    <button class="drawer-link" data-open="config" role="menuitem">⚙️ Configurações</button>
+    <button class="drawer-link" data-open="politica" role="menuitem">📜 Política de Privacidade</button>
+    <button class="drawer-link" data-open="termos" role="menuitem">📘 Termos de Serviço</button>
+  </nav><footer class="drawer-footer muted">v5.2 • PWA</footer></aside>
+<header class="app-header"><button class="hamburger" id="btnOpenDrawer" aria-label="Abrir menu" aria-haspopup="true" aria-controls="drawer">☰</button>
+<div class="brand"><span class="logo">🌱</span><div class="titles"><h1>Grão Digital</h1><small>Gestão de talhões, aplicações e custos</small></div></div></header>
+<main id="conteudo" class="conteudo">
+<section id="sec-talhoes" class="card"><h2>🌿 Talhões</h2><div class="row gap">
+<input id="nomeTalhao" class="inp" placeholder="Nome do Talhão"><button class="btn" id="btnAddTalhao">Adicionar Talhão</button></div><ul id="listaTalhoes" class="lista"></ul></section>
+<section id="sec-registros" class="card hidden"><h2>🧾 Registros de Adubação</h2><div class="grid grid-4 gap">
+<select id="regTalhao" class="inp"></select><select id="regInsumo" class="inp"></select><input id="regDesc" class="inp" placeholder="Descrição (opcional)">
+<input id="regQtd" class="inp" placeholder="Qtd aplicada (kg)" type="number" min="0" step="0.01"></div><div class="hint">O custo usa o preço do estoque (saco de 50kg).</div>
+<div class="row end"><button id="btnSalvarAplicacao" class="btn">Salvar aplicação</button></div><h3>Últimas aplicações</h3><ul id="listaRegistros" class="lista"></ul></section>
+<section id="sec-estoque" class="card hidden"><h2>📦 Estoque</h2><div class="grid grid-3 gap"><input id="estNome" class="inp" placeholder="Ex.: NPK">
+<input id="estQtd" class="inp" placeholder="Ex.: 1000 (kg)" type="number" min="0" step="0.01"><input id="estPreco" class="inp" placeholder="Preço por saco 50kg (R$)" type="number" min="0" step="0.01"></div>
+<div class="row end"><button id="btnAddEstoque" class="btn">Adicionar ao Estoque</button></div><h3>Itens</h3>
+<table class="tabela" id="tabEstoque"><thead><tr><th>Insumo</th><th>Qtd (kg)</th><th>Preço 50kg (R$)</th><th>Ações</th></tr></thead><tbody></tbody></table></section>
+<section id="sec-resumo" class="card hidden"><h2>📊 Resumo Mensal</h2><div class="grid grid-3 gap"><select id="mesResumo" class="inp"></select>
+<select id="anoResumo" class="inp"></select><div class="row gap"><button id="btnExportCSV" class="btn btn-sec">Exportar CSV</button><button id="btnExportPDF" class="btn btn-sec">Exportar PDF</button></div></div>
+<table class="tabela" id="tabResumo"><thead><tr><th>Talhão</th><th>Insumo</th><th>Kg aplicados</th><th>Gasto (R$)</th><th>Mês/Ano</th></tr></thead><tbody></tbody><tfoot><tr><th colspan="2">Total</th><th id="resKg">0</th><th id="resR$">R$ 0,00</th><th></th></tr></tfoot></table></section>
+<section id="sec-config" class="card hidden"><h2>⚙️ Configurações</h2><div class="card-ghost"><h3>Histórico / Backup</h3>
+<div class="row gap wrap"><button id="btnExportJSON" class="btn btn-sec">Exportar backup (JSON)</button><label class="file"><input type="file" id="inpImportJSON" accept=".json"><span class="btn btn-sec">Importar backup (JSON)</span></label></div></div>
+<div class="card-ghost"><h3>Backup no Google Drive (opcional)</h3><div class="row gap wrap"><button class="btn" id="btnGoogleConectar">Conectar ao Google</button>
+<button class="btn btn-sec" id="btnGoogleSalvar">Salvar no Drive</button><button class="btn btn-sec" id="btnGoogleCarregar">Carregar do Drive</button></div><small class="hint">Usa OAuth do Google Drive. Precisa autorizar na sua conta Google.</small></div></section>
+<section id="sec-politica" class="card hidden"><h2>📜 Política de Privacidade</h2><div class="policy"><p class="muted">Última atualização: Outubro de 2025</p>
+<p>O <strong>Grão Digital</strong> armazena localmente os dados que você insere (talhões, insumos, registros e estoque). Esses dados <strong>não são enviados automaticamente</strong> para servidores externos.</p>
+<p>Se optar por conectar a sua conta Google, o app pedirá permissão somente para criar e atualizar um arquivo chamado <code>grao-digital-backup.json</code> no seu Google Drive e ler esse arquivo para restauração. Nenhum outro arquivo é acessado.</p>
+<p>Não há compartilhamento com terceiros, cookies de rastreamento ou analytics.</p>
+<p>Dúvidas? <a href="mailto:suporte@graodigital.app">suporte@graodigital.app</a>. Versão externa: <a href="politica.html" target="_blank" rel="noopener">politica.html</a></p></div></section>
+<section id="sec-termos" class="card hidden"><h2>📘 Termos de Serviço</h2><div class="policy"><p class="muted">Última atualização: Outubro de 2025</p>
+<p>Ao utilizar o <strong>Grão Digital</strong>, você concorda com estes Termos. O app é fornecido “no estado em que se encontra”, sem garantias.</p>
+<ul><li><strong>Uso e responsabilidade:</strong> Você é responsável pelos dados e pelo uso do app.</li>
+<li><strong>Propriedade dos dados:</strong> Os dados inseridos pertencem a você.</li>
+<li><strong>Armazenamento:</strong> Os dados ficam localmente; Drive é opcional.</li>
+<li><strong>Limitação de responsabilidade:</strong> Não há responsabilidade por perdas decorrentes de falhas ou indisponibilidade.</li>
+<li><strong>Alterações:</strong> Podemos atualizar estes Termos; uso contínuo implica concordância.</li>
+<li><strong>Contato:</strong> <a href="mailto:suporte@graodigital.app">suporte@graodigital.app</a></li></ul>
+<p>Versão externa: <a href="termos.html" target="_blank" rel="noopener">termos.html</a></p></div></section>
+</main>
+<nav class="bottom-nav"><button data-tab="talhoes" class="nav-btn active">🌿 Talhões</button><button data-tab="registros" class="nav-btn">🧾 Registros</button><button data-tab="estoque" class="nav-btn">📦 Estoque</button><button data-tab="resumo" class="nav-btn">📊 Resumo</button></nav>
+<script src="app.js"></script></body></html>
