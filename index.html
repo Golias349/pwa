@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0e3b22" />
+  <title>Grão Digital</title>
+
+  <link rel="icon" href="./icone.png" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="stylesheet" href="./estilo.css" />
+
+  <!-- Google API para Drive (OAuth + Drive v3) -->
+  <script src="https://apis.google.com/js/api.js"></script>
+</head>
+<body>
+  <!-- Cabeçalho -->
+  <header class="topo">
+    <div class="topo__wrap">
+      <div class="brand">
+        <img src="./icone.png" class="brand__logo" alt="Grão Digital" />
+        <div class="brand__txt">
+          <h1>Grão Digital</h1>
+          <p class="sub">Gestão de talhões, aplicações e custos</p>
+        </div>
+      </div>
+      <button id="btnMenu" class="icon-btn" aria-label="Menu">☰</button>
+    </div>
+    <div class="topo__fade"></div>
+  </header>
+
+  <!-- Menu lateral -->
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <div class="drawer__head">
+      <strong>Grão Digital</strong>
+      <button id="btnDrawerClose" class="icon-btn" aria-label="Fechar">✕</button>
+    </div>
+    <nav class="drawer__nav">
+      <a href="#" class="drawer__link" data-open="config">⚙️ Configurações</a>
+      <a href="./politica.html" class="drawer__link" target="_blank">🔒 Política de Privacidade</a>
+      <a href="./termos.html" class="drawer__link" target="_blank">📜 Termos de Serviço</a>
+    </nav>
+    <div class="drawer__foot">
+      <span>PWA • <strong id="versaoTxt">v6.3</strong></span>
+      <span class="dev">Desenvolvido por: <strong>Elimaycon Furtado Gomes</strong></span>
+    </div>
+  </aside>
+  <div id="backdrop" class="backdrop" aria-hidden="true"></div>
+
+  <main class="container">
+    <!-- TALHÕES -->
+    <section id="view-talhoes" class="card">
+      <header class="card__head"><span>🌿</span><h2>Talhões</h2></header>
+      <div class="row gap wrap">
+        <input id="inpTalhao" class="input" placeholder="Nome do Talhão" />
+        <button id="btnAddTalhao" class="btn btn-primary">Adicionar Talhão</button>
+      </div>
+      <ul id="listaTalhoes" class="list"></ul>
+    </section>
+
+    <!-- REGISTROS -->
+    <section id="view-registros" class="card hidden">
+      <header class="card__head"><span>🧾</span><h2>Registros de Adubação</h2></header>
+      <div class="row gap wrap">
+        <select id="selTalhao" class="input"></select>
+        <select id="selInsumo" class="input"></select>
+        <input id="inpQtd" class="input" inputmode="decimal" placeholder="Qtd aplicada (kg)" />
+        <input id="inpDesc" class="input" placeholder="Descrição (opcional)" />
+        <button id="btnSalvarAplic" class="btn btn-primary grow">Salvar aplicação</button>
+      </div>
+      <p class="muted">O custo usa o preço do estoque (saco de 50 kg).</p>
+      <h3 class="section-sub">Últimas aplicações</h3>
+      <ul id="listaAplic" class="list"></ul>
+    </section>
+
+    <!-- ESTOQUE -->
+    <section id="view-estoque" class="card hidden">
+      <header class="card__head"><span>📦</span><h2>Estoque</h2></header>
+      <div class="row gap wrap">
+        <input id="inpEstNome" class="input" placeholder="Nome do insumo (ex.: NPK)" />
+        <input id="inpEstQtd" class="input" inputmode="decimal" placeholder="Qtd (kg)" />
+        <input id="inpEstPreco" class="input" inputmode="decimal" placeholder="Preço 50kg (R$)" />
+        <button id="btnEstAdd" class="btn btn-primary">Adicionar</button>
+      </div>
+      <table class="table">
+        <thead><tr><th>Insumo</th><th>Qtd (kg)</th><th>Preço 50kg (R$)</th><th class="col-acoes">Ações</th></tr></thead>
+        <tbody id="tbEst"></tbody>
+      </table>
+    </section>
+
+    <!-- RESUMO -->
+    <section id="view-resumo" class="card hidden">
+      <header class="card__head"><span>📊</span><h2>Resumo Mensal</h2></header>
+      <div class="row gap wrap">
+        <select id="selMes" class="input"></select>
+        <select id="selAno" class="input"></select>
+        <div class="row gap">
+          <button id="btnCSV" class="btn">Exportar CSV</button>
+          <button id="btnPDF" class="btn">Exportar PDF</button>
+        </div>
+      </div>
+      <table class="table" id="tblResumo">
+        <thead><tr><th>Talhão</th><th>Insumo</th><th>Kg</th><th>Gasto (R$)</th><th>Mês/Ano</th><th class="col-acoes">Ações</th></tr></thead>
+        <tbody id="tbResumo"></tbody>
+        <tfoot><tr><th>Total</th><th></th><th id="totKg">0</th><th id="totR$">R$ 0,00</th><th></th><th></th></tr></tfoot>
+      </table>
+    </section>
+
+    <!-- CONFIGURAÇÕES -->
+    <section id="view-config" class="card hidden">
+      <header class="card__head"><span>⚙️</span><h2>Configurações</h2></header>
+      <div class="row gap wrap">
+        <button id="btnExportJSON" class="btn">Exportar backup (JSON)</button>
+        <input id="fileImport" type="file" accept="application/json" />
+        <button id="btnImportJSON" class="btn">Importar backup (JSON)</button>
+      </div>
+
+      <div class="row gap wrap">
+        <button id="btnGAuth" class="btn">🔐 Conectar Google Drive</button>
+        <button id="btnGSave" class="btn">☁️ Salvar no Drive</button>
+        <button id="btnGLoad" class="btn">⬇️ Restaurar do Drive</button>
+        <button id="btnGSignout" class="btn">Sair do Google</button>
+      </div>
+
+      <div class="row right">
+        <button id="btnClearAll" class="btn btn-danger">Apagar TODOS os dados</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Abas inferiores -->
+  <nav class="tabs">
+    <button class="tab active" data-view="view-talhoes">🌿 Talhões</button>
+    <button class="tab" data-view="view-registros">🧾 Registros</button>
+    <button class="tab" data-view="view-estoque">📦 Estoque</button>
+    <button class="tab" data-view="view-resumo">📊 Resumo</button>
+    <button class="tab" data-view="view-config">⚙️ Config</button>
+  </nav>
+
+  <!-- Scripts -->
+  <script>
+    // Ajuste para cada repositório:
+    // "/agro-café-pwa/" (estável)  ou  "/pwa-test/" (teste)
+    const BASE_PATH = "/pwa-test/";
+    const APP_VERSION = "v6.3";
+    const GOOGLE_CLIENT_ID = "149167584419-39h4d0qhjfjqs09687oih6p1fkpqds0k.apps.googleusercontent.com";
+  </script>
+  <script src="./app.js"></script>
+</body>
+</html>
