@@ -1,108 +1,29 @@
-<!doctype html>
-<html lang="pt-BR"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Grão Digital</title><meta name="theme-color" content="#0e3b22">
-<link rel="manifest" href="manifest.json"><link rel="icon" href="icone.png">
-<link rel="stylesheet" href="style.css"></head>
-<body>
-<header class="hero"><div class="hero-inner">
-  <div class="brand"><img src="icone.png" class="logo" alt="Logo"><h1>Grão Digital</h1></div>
-  <button id="btnMenu" class="icon-btn" aria-label="Abrir menu">☰</button>
-</div></header>
-<nav id="drawer" class="drawer" aria-hidden="true" aria-label="Menu lateral">
-  <div class="drawer-head"><strong>Grão Digital</strong><button id="btnCloseDrawer" class="icon-btn" aria-label="Fechar">✕</button></div>
-  <ul class="drawer-list">
-    <li><button class="drawer-link" data-tab="talhoes">🌿 Talhões</button></li>
-    <li><button class="drawer-link" data-tab="registros">🧾 Registros</button></li>
-    <li><button class="drawer-link" data-tab="estoque">📦 Estoque</button></li>
-    <li><button class="drawer-link" data-tab="resumo">📊 Resumo</button></li>
-    <li><button class="drawer-link" data-action="config">⚙️ Configurações</button></li>
-    <li><button class="drawer-link" data-action="sobre">📘 Sobre o aplicativo</button></li>
-    <li><a class="drawer-link" href="politica.html" target="_blank" rel="noopener">📄 Política de Privacidade</a></li>
-    <li><a class="drawer-link" href="termos.html" target="_blank" rel="noopener">📜 Termos de Serviço</a></li>
-  </ul>
-  <footer class="drawer-foot">Desenvolvido por: Elimaycon Furtado Gomes<br>Versão 6.2</footer>
-</nav>
-<main class="conteudo">
-  <section id="tab-talhoes" class="card tab active"><h2>🌿 Talhões</h2>
-    <div class="grid-3"><input id="nomeTalhao" placeholder="Nome do Talhão"><button id="btnAddTalhao" class="btn primary">Adicionar Talhão</button></div>
-    <ul id="listaTalhoes" class="lista"></ul>
-  </section>
-  <section id="tab-registros" class="card tab"><h2>🧾 Registros de Adubação</h2>
-    <div class="grid-4">
-      <select id="regTalhao"></select>
-      <input id="regInsumo" list="listaInsumos" placeholder="Insumo (vem do estoque)"><datalist id="listaInsumos"></datalist>
-      <input id="regDesc" placeholder="Descrição (opcional)">
-      <input id="regQtd" type="number" step="0.01" min="0" placeholder="Qtd aplicada (kg)">
-      <button id="btnSalvarAplicacao" class="btn primary wide">Salvar aplicação</button>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta property="og:title" content="Grão Digital"/>
+    <meta property="og:description" content="Gestão de talhões, aplicações e custos agrícolas"/>
+    <meta property="og:image" content="https://mocha-cdn.com/og.png" type="image/png"/>
+    <meta property="og:url" content="https://ujhzegxqvko4i.mocha.app"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:author" content="Mocha"/>
+    <meta property="og:site_name" content="Grão Digital"/>
+    <meta property="twitter:card" content="summary_large_image"/>
+    <meta property="twitter:site" content="@get_mocha"/>
+    <meta property="twitter:title" content="Grão Digital"/>
+    <meta property="twitter:description" content="Gestão de talhões, aplicações e custos agrícolas"/>
+    <meta property="twitter:image" content="https://mocha-cdn.com/og.png" type="image/png"/>
+    <link rel="shortcut icon" href="https://mocha-cdn.com/favicon.ico" type="image/x-icon"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="https://mocha-cdn.com/apple-touch-icon.png" type="image/png"/>
+    <title>
+      Grão Digital
+    </title>
+  </head>
+  <body>
+    <div id="root">
     </div>
-    <small class="muted">O custo usa o preço do estoque (saco de 50kg).</small>
-    <h3>Últimas aplicações</h3><ul id="listaRegistros" class="lista"></ul>
-  </section>
-  <section id="tab-estoque" class="card tab"><h2>📦 Estoque</h2>
-    <div class="grid-4">
-      <input id="estNome" placeholder="Ex.: NPK">
-      <input id="estQtd" type="number" step="0.01" min="0" placeholder="Ex.: 1000 (kg)">
-      <input id="estPrecoSaco" type="number" step="0.01" min="0" placeholder="Preço por saco 50kg (R$)">
-      <button id="btnAddEstoque" class="btn primary">Adicionar ao Estoque</button>
-    </div>
-    <table class="tabela"><thead><tr><th>Insumo</th><th>Qtd (kg)</th><th>Preço 50kg (R$)</th><th>Ações</th></tr></thead><tbody id="tbodyEstoque"></tbody></table>
-  </section>
-  <section id="tab-resumo" class="card tab"><h2>📊 Resumo Mensal</h2>
-    <div class="grid-3">
-      <select id="mesResumo"></select><select id="anoResumo"></select>
-      <div class="btns-right"><button id="btnExportCSV" class="btn">Exportar CSV</button><button id="btnExportPDF" class="btn">Exportar PDF</button></div>
-    </div>
-    <table class="tabela">
-      <thead><tr><th>Talhão</th><th>Insumo</th><th>Kg aplicados</th><th>Gasto (R$)</th><th>Mês/Ano</th><th style="width:1%">Ações</th></tr></thead>
-      <tbody id="tabelaResumo"></tbody>
-      <tfoot><tr><td colspan="2">Total</td><td id="totalKg">0</td><td id="totalR$">R$ 0,00</td><td colspan="2"></td></tr></tfoot>
-    </table>
-  </section>
-</main>
-<footer class="bottom-nav">
-  <button class="tab-btn active" data-tab="talhoes">🌿 Talhões</button>
-  <button class="tab-btn" data-tab="registros">🧾 Registros</button>
-  <button class="tab-btn" data-tab="estoque">📦 Estoque</button>
-  <button class="tab-btn" data-tab="resumo">📊 Resumo</button>
-</footer>
-<div id="modal" class="modal hidden" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="modal-overlay"></div>
-  <div class="modal-card">
-    <div class="modal-header"><h3 id="modalTitle">Confirmar</h3><button id="modalClose" class="icon-btn" aria-label="Fechar">✕</button></div>
-    <div id="modalBody" class="modal-body"></div>
-    <div class="modal-footer"><button id="modalCancel" class="btn">Cancelar</button><button id="modalConfirm" class="btn danger">Excluir</button></div>
-  </div>
-</div>
-<div id="modalConfig" class="modal hidden" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="modal-overlay"></div>
-  <div class="modal-card">
-    <div class="modal-header"><h3>⚙️ Configurações</h3><button class="icon-btn" data-close="config" aria-label="Fechar">✕</button></div>
-    <div class="modal-body">
-      <div class="card inner"><h3>Histórico / Backup</h3>
-        <div class="row"><button id="btnExportarJSON" class="btn">Exportar backup (JSON)</button>
-          <label class="btn">Importar backup (JSON)<input id="inputImportJSON" type="file" accept="application/json" hidden></label>
-        </div>
-      </div>
-      <div class="card inner"><h3>Backup no Google Drive (opcional)</h3>
-        <div class="row"><button id="btnGoogleConectar" class="btn">Conectar ao Google</button>
-          <button id="btnDriveSalvar" class="btn">Salvar no Drive</button>
-          <button id="btnDriveCarregar" class="btn">Carregar do Drive</button>
-        </div>
-      </div>
-      <div class="card inner danger"><h3>Limpeza</h3><button id="btnApagarTudo" class="btn danger">Apagar TODOS os dados</button></div>
-    </div>
-    <div class="modal-footer"><button class="btn" data-close="config">Fechar</button></div>
-  </div>
-</div>
-<div id="modalSobre" class="modal hidden" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="modal-overlay"></div>
-  <div class="modal-card">
-    <div class="modal-header"><h3>📘 Sobre o aplicativo</h3><button class="icon-btn" data-close="sobre" aria-label="Fechar">✕</button></div>
-    <div class="modal-body"><p><strong>Grão Digital</strong><br>🌱 Versão 6.2<br>Desenvolvido por: <strong>Elimaycon Furtado Gomes</strong><br>Lançado em: Outubro de 2025</p>
-      <p>📧 E-mail de suporte: <em>(defina depois)</em></p></div>
-    <div class="modal-footer"><button class="btn" data-close="sobre">Fechar</button></div>
-  </div>
-</div>
-<script src="app.js"></script>
-</body></html>
+    <script type="module" src="/src/react-app/main.tsx">
+    </script>
+  </body>
+</html>
